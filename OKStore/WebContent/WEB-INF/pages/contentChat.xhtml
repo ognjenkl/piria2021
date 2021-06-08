@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<h:outputText value="#{msg.user}: #{userBean.user.username}" />
+	<br />
+
+	<h:form id="chatToggleButtonForm">
+		<h:outputText value="#{msg.chat}: " />
+		<h:outputText value="#{msg.available} "
+			rendered="#{chatBean.enabled == 1}" />
+		<h:outputText value="#{msg.unavailable} "
+			rendered="#{chatBean.enabled != 1}" />
+		<br />
+		<h:commandButton value="#{msg.enable}"
+			action="#{chatBean.toggle}"
+			disabled="#{chatBean.enabled == 1}"
+			rendered="#{chatBean.enabled != 1}">
+			<f:ajax render="@form :chatPanelGrid :chatPanelGroupRight" />
+		</h:commandButton>
+		<h:commandButton value="#{msg.disable}"
+			action="#{chatBean.toggle}"
+			disabled="#{chatBean.enabled != 1}"
+			rendered="#{chatBean.enabled == 1}">
+			<f:ajax render="@form :chatPanelGrid :chatPanelGroupRight" />
+		</h:commandButton>
+	</h:form>
+
+	<br />
+	<h:panelGrid id="chatPanelGrid" columns="2">
+			<h:form id="chatUsersForm" rendered="#{userBean.user.chatStatus == 1}">
+				<h:dataTable border="1" value="#{chatBean.chatUsers}" var="u">
+					<h:column>
+						<h:commandButton id="userBtn#{u.id}" value="#{u.username}(#{chatBean.countUnreadBySender(u.username)})"
+							action="#{chatBean.getChatMessagesFor(u.id)}"
+							disabled="#{u.chatStatus == 0}">
+						</h:commandButton>
+					</h:column>
+				</h:dataTable>
+			</h:form>
+		<h:panelGroup id="chatPanelGroupRight" rendered="#{userBean.user.chatStatus == 1 and chatBean.currentReceiver.id > 0}">
+			<h:panelGrid id="chatMessageArea">
+				<h:dataTable border="1" value="#{chatBean.chatMessages}" var="m">
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.messageSender}" />
+						</f:facet>
+						<h:outputText value="#{m.senderName}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.messageTime}" />
+						</f:facet>
+						<h:outputText value="#{m.creationTime}">
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+						</h:outputText>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{msg.messageContent}" />
+						</f:facet>
+						<h:outputText value="#{m.content}" />
+					</h:column>
+				</h:dataTable>
+			</h:panelGrid>
+			<h:panelGrid id="chatPanleGridSendMessage" columns="4">
+				<h:form id="chatMessageForm">
+					<h:outputLabel for="chatMessage" />
+					<h:inputText id="chatMessage" value="#{chatBean.chatMessageToSend}">
+						<f:validateLength maximum="256" />
+						<f:validator validatorId="stringOKValidator" />
+						<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+					</h:inputText>
+					<h:commandButton value="#{msg.send}"
+						action="#{chatBean.chatMessageSend}" />
+					<h:message for="chatMessage" style="color: red" />
+				</h:form>
+			</h:panelGrid>
+		</h:panelGroup>
+	</h:panelGrid>
+
+	<h:form>
+		<f:websocket channel="chatChannel">
+			<f:ajax event="ajaxEvent" listener="#{chatBean.ajaxPushed}" render=":chatPanelGroupRight :chatUsersForm"></f:ajax>
+		</f:websocket>
+	</h:form>
+
+	<h:form>
+		<f:websocket channel="chatToggleChannel" >
+			<f:ajax event="toggleAjaxEvent" listener="#{chatBean.toggleAjaxPushed}" render=":chatToggleButtonForm :chatPanelGrid" />
+		</f:websocket>
+	</h:form>
+
+
+</ui:composition>

@@ -1,0 +1,22 @@
+<ui:composition template="/WEB-INF/templates/masterTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	
+
+	
+	<ui:define name="title">
+		<h:outputText value="#{msg.pageGuestTitle}" rendered="#{userBean.user.privilege gt 3}" />
+		<h:outputText value="#{msg.pageUserTitle}" rendered="#{userBean.user.privilege eq 3}" />
+		<h:outputText value="#{msg.pageSuperuserTitle}" rendered="#{userBean.user.privilege eq 2}" />
+		<h:outputText value="#{msg.pageAdminTitle}" rendered="#{userBean.user.privilege eq 1}" />
+	</ui:define>
+	
+	
+	
+	<ui:define name="content">
+		<ui:include src="/WEB-INF/pages/contentGuest.xhtml" />
+	</ui:define>
+	
+</ui:composition>

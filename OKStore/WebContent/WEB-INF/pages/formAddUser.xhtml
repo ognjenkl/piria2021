@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<br />
+	<br />
+	
+	<h:form id="formAddUser" enctype="multipart/form-data">
+		<h:panelGrid columns="3"
+			rendered="#{!userBean.loggedIn || (userBean.loggedIn and userBean.user.privilege eq 1)}">
+			<h:outputLabel for="firstName" value="#{msg.firstName}:" />
+			<h:inputText id="firstName" value="#{userBean.userRegister.firstName}">
+				<f:validateLength maximum="100" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="firstName" style="color: red" />
+
+			<h:outputLabel for="lastName" value="#{msg.lastName}:" />
+			<h:inputText id="lastName" value="#{userBean.userRegister.lastName}">
+				<f:validateLength maximum="100" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="lastName" style="color: red" />
+
+			<h:outputLabel for="socialNo" value="#{msg.socialNo}:" />
+			<h:inputText id="socialNo" value="#{userBean.userRegister.socialNo}"
+					required="true" requiredMessage="#{msg.socialNoRequiredMessage}">
+				<f:validateLength maximum="45" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="socialNo" style="color: red" />
+
+			<h:outputLabel for="birthDate" value="#{msg.birthDate}:" />
+			<p:calendar id="birthDate" value="#{userBean.userRegister.birthDate}"
+					pattern="dd.MM.yyyy." showOn="both" navigator="true"
+					converter="dateToDateConverter" />
+			<h:message for="birthDate"  style="color: red"/>
+
+			<h:outputLabel for="email" value="#{msg.email}:" />
+			<h:inputText id="email" value="#{userBean.userRegister.email}"
+					required="true" requiredMessage="#{msg.emailRequiredMessage}">
+				<f:validateLength minimum="5" maximum="254" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="email" style="color: red" />
+
+			<h:outputLabel for="privilege" value="#{msg.privilege}:" rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}" />
+			<h:selectOneMenu id="privilege"
+					value="#{userBean.userRegister.privilege}"
+					rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}">
+				<f:selectItem itemValue="#{msg.userNum}" itemLabel="#{msg.user}" />
+				<f:selectItem itemValue="#{msg.adminNum}" itemLabel="#{msg.admin}" />
+				<f:validateLongRange minimum="1" maximum="100" />
+			</h:selectOneMenu>
+			<h:message for="privilege" style="color: red" rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}" />
+
+			<h:outputLabel for="usernameRegister" value="#{msg.username}:" />
+			<h:inputText id="usernameRegister"
+					value="#{userBean.userRegister.username}" required="true"
+					requiredMessage="#{msg.usernameRequiredMessage}">
+				<f:validateLength maximum="45" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:validator validatorId="usernameLengthAndForbidenCharsValidator"/>
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+				<f:attribute name="errorMessageUsernameRegister" value="#{msg.validationFailUsernameRegister}" />
+			</h:inputText>
+			<h:message id="usernameRegisterMessage" for="usernameRegister" style="color: red" />
+
+			<h:outputLabel for="passwordRegister" value="#{msg.password}:" rendered="#{not userBean.loggedIn}" />
+			<h:inputSecret id="passwordRegister"
+					value="#{userBean.userRegister.password}" required="true"
+					requiredMessage="#{msg.passwordRequiredMessage}" rendered="#{not userBean.loggedIn}">
+				<f:attribute name="confirmPasswordAttribute" value="#{confirmPasswordBind.submittedValue}" />
+				<f:validator validatorId="passwordConfirmValidator" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:validator validatorId="passwordLengthAndCharsValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+				<f:attribute name="errorMessagePassRegister" value="#{msg.validationFailPassRegister}" />
+			</h:inputSecret>
+			<h:message id="passwordRegisterMessage" for="passwordRegister" style="color: red" rendered="#{not userBean.loggedIn}" />
+
+			<h:outputLabel for="passwordRegisterConfirm"
+					value="#{msg.passwordConfirm}:" rendered="#{not userBean.loggedIn}" />
+			<h:inputSecret id="passwordRegisterConfirm"
+					binding="#{confirmPasswordBind}" required="true"
+					requiredMessage="#{msg.passwordRequiredMessage}" rendered="#{not userBean.loggedIn}">
+			</h:inputSecret>
+			<h:message for="passwordRegisterConfirm" style="color: red" rendered="#{not userBean.loggedIn}" />
+
+			<h:panelGroup>
+				<h:commandButton id="registerBtn" value="#{msg.register}"
+					action="#{userBean.register}" rendered="#{!userBean.loggedIn}" />
+				<h:commandButton id="addUserBtn" value="#{msg.add}"
+					action="#{userBean.addUser}"
+					rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}" />
+				<h:commandButton id="cancelUserBtn" value="#{msg.cancel}"
+					immediate="true" action="manageUsers?faces-redirect=true"
+					rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}" />
+			</h:panelGroup>
+			<h:message for="formAddUser" />
+
+		</h:panelGrid>
+	</h:form>
+
+	<br />
+	<br />
+
+	<h:outputScript library="js" name="register.js" />
+
+</ui:composition>

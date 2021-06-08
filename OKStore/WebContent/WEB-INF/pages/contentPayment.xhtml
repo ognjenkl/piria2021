@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formPayment" enctype="multipart/form-data">
+		<h:panelGrid columns="2" border="1">
+			<h:outputLabel for="articleName" value="#{msg.pageArticleName}:" />
+			<h:outputText id="articleName"
+				value="#{paymentBean.articleUserHasArticleToBuy.name}" />
+
+			<h:outputLabel for="articleCategory"
+				value="#{msg.pageArticleCategory}:" />
+			<h:dataTable id="articleCategory"
+				value="#{paymentBean.articleUserHasArticleToBuy.categoryList}"
+				var="c">
+				<h:column>
+					<h:outputText value="#{c.name}" />
+				</h:column>
+			</h:dataTable>
+
+			<h:outputLabel for="articlePicture" value="#{msg.picture}:" />
+			<ui:repeat var="p"
+				value="#{paymentBean.articleUserHasArticleToBuy.pictureList}">
+				<h:outputLink value="#{p.locationURL}" target="_blank">
+					<h:graphicImage value="#{p.location}" width="50px" />
+				</h:outputLink>
+			</ui:repeat>
+
+			<h:outputLabel for="articlePrice" value="#{msg.pageArticlePrice}:" />
+			<h:outputText id="articlePrice"
+				value="#{paymentBean.articleUserHasArticleToBuy.price}" />
+		</h:panelGrid>
+
+		<br />
+		<br />
+
+		<h:panelGrid columns="3">
+			<h:outputLabel for="cardNumber" value="#{msg.cardNumber}:" />
+			<h:inputText id="cardNumber" value="#{paymentBean.cardNumber}"
+				required="true" requiredMessage="#{msg.cardNumberError}"
+				maxlength="16" />
+			<h:message for="cardNumber" style="color:red" />
+
+			<h:outputLabel for="cardType" value="#{msg.cardType}:" />
+			<h:selectOneMenu value="#{paymentBean.cardType}">
+				<f:selectItem itemValue="VISA" itemLabel="VISA" />
+				<f:selectItem itemValue="MASTERCARD" itemLabel="MASTERCARD" />
+				<f:selectItem itemValue="AMERICAN EXPRESS"
+					itemLabel="AMERICAN EXPRESS" />
+			</h:selectOneMenu>
+			<h:message for="cardType" style="color:red" />
+
+			<h:outputLabel for="panelGridExpiration"
+				value="#{msg.cardExpirationDate}:" />
+			<h:panelGroup id="panelGroupExpiration">
+				<h:inputText id="cardExpirationMonth"
+					value="#{paymentBean.cardExpirationMonth}" required="true"
+					requiredMessage="#{msg.cardExpirationMonthError}" maxlength="2"
+					title="#{msg.month}">
+					<f:validateLongRange minimum="1" maximum="12" />
+				</h:inputText>
+				/
+				<h:inputText id="cardExpirationYear"
+					value="#{paymentBean.cardExpirationYear}" required="true"
+					requiredMessage="#{msg.cardExpirationYearError}" maxlength="2"
+					title="#{msg.year}">
+					<f:validateLongRange />
+				</h:inputText>
+			</h:panelGroup>
+			<h:panelGroup>
+				<h:message for="cardExpirationMonth" style="color:red" />
+				<h:outputText value=" " />
+				<h:message for="cardExpirationYear" style="color:red" />
+			</h:panelGroup>
+
+			<h:outputLabel for="cardPin" value="#{msg.cardPIN}:" />
+			<h:inputSecret id="cardPin" value="#{paymentBean.cardPin}"
+				required="true" requiredMessage="#{msg.cardPINError}" />
+			<h:message for="cardPin" style="color:red" />
+
+			<div />
+			<div />
+			<h:commandButton value="#{msg.pay}"
+				action="#{paymentBean.buyArticle}" />
+			<h:message for="formPayment"></h:message>
+
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

@@ -1,0 +1,27 @@
+<ui:composition template="/WEB-INF/templates/masterTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<ui:define name="head-meta">
+		<ui:fragment rendered="#{activationBean.valid}">
+			<meta http-equiv="refresh" content="3;url=guest.xhtml" />
+		</ui:fragment>
+	</ui:define>
+
+	<ui:define name="title">
+		<h:outputText value="#{msg.pageActivateTitle}" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:panelGroup layout="block" rendered="#{activationBean.valid}">
+			<h:outputText value="#{msg.pageActivateSuccessful} " />
+			<h:link outcome="guest">#{msg.pageGuestLinkName}</h:link>
+		</h:panelGroup>
+		<h:panelGroup layout="block" rendered="#{!activationBean.valid}">
+			<h:outputText value="#{msg.pageActivateUnsuccessful}" />
+		</h:panelGroup>
+	</ui:define>
+
+</ui:composition>

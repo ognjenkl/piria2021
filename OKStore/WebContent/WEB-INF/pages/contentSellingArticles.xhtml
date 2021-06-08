@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h2>
+	<h:outputText value="#{msg.pageSellingArticlesTitle}" />
+	<br />
+	<h:link value="#{msg.advertiseArticles}" outcome="advertising" />
+</h2>
+
+
+	<h:form id="sellingArticlesForm" style="overflow-x: auto;">
+		<h:dataTable id="sellingArticlesDataTable" border="1"
+			value="#{articlesBean.sellingArticleList}" var="a">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleName}" />
+				</f:facet>
+				<h:outputText value="#{a.name}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescriptionShort}" />
+				</f:facet>
+				<h:outputText value="#{a.descriptionShort}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescription}" />
+				</f:facet>
+				<h:outputText value="#{a.description}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePrice}" />
+				</f:facet>
+				<h:outputText value="#{a.price}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleCategory}" />
+				</f:facet>
+				<ui:repeat var="cat" value="#{a.categoryList}">
+					<h:outputText value="#{cat.name}" />
+					<br />
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePicture}" />
+				</f:facet>
+				<ui:repeat var="p" value="#{a.pictureList}">
+					<h:outputLink value="#{p.locationURL}" target="_blank">
+						<h:graphicImage value="#{p.location}" width="50px" />
+					</h:outputLink>
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleStatus}" />
+				</f:facet>
+				<h:outputText value="#{articlesBean.intToStr(a.status)}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleStartSellingDate}" />
+				</f:facet>
+				<h:outputText value="#{a.startSellingDate}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleEndSellingPeriod}" />
+				</f:facet>
+				<h:outputText value="#{a.endSellingPeriod}" />
+			</h:column>
+			<h:column>
+				<h:commandButton value="#{msg.edit}" action="editArticle" rendered="#{a.status le 3}">
+					<f:param name="articleToEdit" value="#{a}" />
+				</h:commandButton>
+			</h:column>
+			<h:column>
+				<h:commandButton value="#{msg.delete}" action="#{articlesBean.deleteArticle(a.id)}" rendered="#{a.status le 3}">
+					<f:ajax render="sellingArticlesForm:sellingArticlesDataTable" />
+				</h:commandButton>
+			</h:column>
+			<h:column>
+				<h:commandButton value="#{msg.publish}" 
+						action="#{articlesBean.publishArticle(a.id)}" rendered="#{a.status le 3}">
+					<f:ajax render="sellingArticlesForm:sellingArticlesDataTable" />
+				</h:commandButton>
+				<h:commandButton value="#{msg.stopSelling}" 
+						action="#{articlesBean.stopSellingArticle(a.id)}" rendered="#{a.status eq 5}">
+					<f:ajax render="sellingArticlesForm:sellingArticlesDataTable" />
+				</h:commandButton>
+			</h:column>
+		</h:dataTable>
+
+		<h:commandButton value="#{msg.add}" action="#{articlesBean.displayAddArticle}" />
+	</h:form>
+
+</ui:composition>

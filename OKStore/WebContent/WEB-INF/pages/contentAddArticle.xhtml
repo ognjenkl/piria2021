@@ -1,0 +1,94 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+	<h2>
+		<h:outputText value="#{msg.pageArticleAdd}" />
+	</h2>
+	<h:form id="formAddArticle" enctype="multipart/form-data">
+		<h:panelGrid columns="3">
+			<h:outputLabel for="name" value="#{msg.pageArticleName}:" />
+			<h:inputText id="name" value="#{articleBean.article.name}"
+				required="true"
+				requiredMessage="#{msg.addArticleRequiredMessageName}">
+				<f:validateLength maximum="100" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="name" style="color: red" />
+
+			<h:outputLabel for="descriptionShort"
+				value="#{msg.pageArticleDescriptionShort}:" />
+			<h:inputText id="descriptionShort"
+				value="#{articleBean.article.descriptionShort}" required="true"
+				requiredMessage="#{msg.addArticleRequiredMessageDescritptionShort}">
+				<f:validateLength maximum="500" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="descriptionShort" style="color: red" />
+
+			<h:outputLabel for="description"
+				value="#{msg.pageArticleDescription}:" />
+			<h:inputText id="description"
+				value="#{articleBean.article.description}">
+				<f:validateLength maximum="3000" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="description" style="color: red" />
+
+			<h:outputLabel for="price" value="#{msg.pageArticlePrice}:" />
+			<h:inputText id="price" value="#{articleBean.article.price}"
+				required="true"
+				requiredMessage="#{msg.addArticleRequiredMessagePrice}">
+				<f:validateDoubleRange minimum="0" maximum="1000000" />
+			</h:inputText>
+			<h:message for="price" style="color: red" />
+
+			<h:outputLabel for="category" value="#{msg.pageArticleCategory}:" />
+			<h:selectManyListbox id="category" size="10"
+				value="#{articleBean.selectedCategoryList}" required="true"
+				requiredMessage="#{msg.addArticleRequiredMessageCategory}">
+				<f:selectItems value="#{articleBean.categoryList}" var="c"
+					itemLabel="#{c.name}" itemValue="#{c.id}" />
+			</h:selectManyListbox>
+			<h:message for="category" style="color: red" />
+
+			<h:outputLabel for="picture" value="#{msg.pictureToUpload}:" />
+			<h:inputFile id="picture" value="#{articleBean.articlePicPart}" a:multiple="true" 
+				required="true" requiredMessage="#{msg.addArticleRequiredMessagePicture}" />
+			<h:message for="picture" style="color: red" />
+
+			<h:outputLabel for="startSellingDate"
+				value="#{msg.pageArticleStartSellingDate}:" />
+			<p:calendar id="startSellingDate"
+				value="#{articleBean.article.startSellingDate}"
+				pattern="dd.MM.yyyy. HH:mm:ss" converter="dateToTimestampConverter"
+				navigator="true" showOn="both">
+				<f:validator validatorId="dateOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.errorStartSellingDateConvertor}" />
+			</p:calendar>
+			<h:message for="startSellingDate" style="color: red" />
+
+			<h:outputLabel for="endSellingPeriod" value="#{msg.pageArticleEndSellingPeriod}:" />
+			<h:inputText id="endSellingPeriod"
+				value="#{articleBean.article.endSellingPeriod}">
+				<f:validateLongRange minimum="0" maximum="30" />
+			</h:inputText>
+			<h:message for="endSellingPeriod" style="color: red" />
+
+
+			<h:panelGroup>
+				<h:commandButton id="addArticleBtn" value="#{msg.add}"
+					action="#{articleBean.add}" />
+				<h:commandButton id="cancelUserBtn" value="#{msg.cancel}"
+					immediate="true" action="sellingArticles?faces-redirect=true" />
+			</h:panelGroup>
+			<h:message for="formAddArticle" style="color: red" />
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

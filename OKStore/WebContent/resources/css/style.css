@@ -1,0 +1,60 @@
+@CHARSET "UTF-8";
+
+.links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    /*height: 60px;
+    */
+}
+
+.links a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    float: left;
+    border-right:1px solid #bbb;    
+    height: 30px;
+    min-width: 50px;
+}
+
+.links a:hover {
+	background-color: #ff8000;	
+}
+
+.links select {
+	float: right;
+	height: 60px;	
+}
+
+.messagesInfo {
+	display: block;
+}
+
+.messagesError {
+	display: block;
+	color: red;
+}
+
+video, img {
+    max-width: 100%;
+    height: auto;
+}
+
+table[id$="PanelGrid"] {
+ 		max-width: 100%;
+ 		display: block;
+ 		box-sizing: border-box;
+}
+
+table[id$="DataTable"] {
+ 		max-width: 100%;
+ 		display: block;
+ 		box-sizing: border-box;
+}
+
+

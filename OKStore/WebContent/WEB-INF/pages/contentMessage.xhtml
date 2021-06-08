@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+
+	<h:outputText value="#{msg.message}" />
+	<br />
+	<br />
+
+    <h:form id="messageForm" prependId="false">
+    		<h:dataTable id="messageDataTable" border="1"
+			value="#{messageBean.indirectMessages}" var="m">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.messageFrom}" />
+				</f:facet>
+				<h:outputText value="#{m.senderName}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.message}" />
+				</f:facet>
+				<h:outputText value="#{m.content}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.date}" />
+				</f:facet>
+				<h:outputText value="#{m.creationTime}" />
+			</h:column>
+			<h:column rendered="#{userBean.user.privilege lt 2}">
+				<input type="button" id="msgWarnBtn#{m.id}"
+					value="#{msg.messageWarnToSeller}"
+					onclick="messageField(msgWarnBtn#{m.id})" />
+				<h:panelGroup id="messageWarnPanel" style="display: none">
+					<h:panelGroup id="warnPanelToRender">
+						<h:outputText value="#{msg.message}: " />
+						<h:inputText id="messageWarnId"
+							value="#{messageBean.messageToSend}" required="true"
+							requiredMessage="#{msg.requiredMessageSendToSeller}">
+							<f:validateLength maximum="1024" />
+							<f:validator validatorId="stringOKValidator" />
+							<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+						</h:inputText>
+						<h:commandButton value="#{msg.send}"
+							action="#{messageBean.sendMessageToSeller(m.articleId)}">
+							<f:ajax execute="messageWarnId" render="warnPanelToRender" />
+						</h:commandButton>
+						<h:message for="messageWarnId" style="color: red" />
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:column>
+			            <h:column rendered="#{userBean.user.privilege eq 3}">
+                <input type="button" id="msgToBuyerBtn#{m.id}"
+                    value="#{msg.messageReply}"
+                    onclick="messageField(msgToBuyerBtn#{m.id})" />
+                <h:panelGroup id="messageToBuyerPanel" style="display: none">
+                    <h:panelGroup id="toBuyerPanelToRender">
+                        <h:outputText value="#{msg.message}: " />
+                        <h:inputText id="messageToBuyerId"
+                            value="#{messageBean.messageToSend}" required="true"
+                            requiredMessage="#{msg.requiredMessageSendToBuyer}">
+                            <f:validateLength maximum="1024" />
+                            <f:validator validatorId="stringOKValidator" />
+                            <f:attribute name="errorMessage" value="#{msg.validationFail}" />
+                        </h:inputText>
+                        <h:commandButton value="#{msg.send}"
+                            action="#{messageBean.sendMessageToBuyer(m)}">
+                            <f:ajax execute="messageToBuyerId" render="toBuyerPanelToRender" />
+                        </h:commandButton>
+                        <h:message for="messageToBuyerId" infoClass="messagesInfo" errorClass="messagesError" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:column>
+            <h:column rendered="#{userBean.user.privilege lt 2}">
+				<h:commandButton id="adminDeleteArticleBtn#{m.id}"
+					value="#{msg.messageDeleteArticle}"
+					action="#{messageBean.deleteArticle(m.id)}">
+					<f:ajax render="@form" />
+				</h:commandButton>
+			</h:column>
+		</h:dataTable>
+		<h:messages infoClass="messagesInfo" errorClass="messagesError" />
+	</h:form>
+
+	<script type="text/javascript">
+		// show/hide button and field for sending messages
+		function messageField(btnHtml) {
+			var btn = document.getElementById(btnHtml.id);
+			var form = document.getElementById(btn.nextElementSibling.id);
+			if (form.style.display === 'none') {
+				// show form, hide button
+				form.style.display = '';
+				btn.style.display = 'none';
+			}
+		}
+	</script>
+
+</ui:composition>

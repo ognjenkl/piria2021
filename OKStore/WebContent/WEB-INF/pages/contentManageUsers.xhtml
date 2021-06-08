@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+	<h:form id="manageUsersForm" style="overflow-x: auto;">
+		<h:dataTable id="manageUsersDataTable" border="1"
+			value="#{manageUsersBean.usersList}" var="u">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.username}" />
+				</f:facet>
+				<h:outputText value="#{u.username}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.firstName}" />
+				</f:facet>
+				<h:outputText value="#{u.firstName}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.lastName}" />
+				</f:facet>
+				<h:outputText value="#{u.lastName}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.socialNo}" />
+				</f:facet>
+				<h:outputText value="#{u.socialNo}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.birthDate}" />
+				</f:facet>
+				<h:outputText value="#{u.birthDate}">
+					<f:convertDateTime type="date" pattern="dd.MM.yyyy." />
+				</h:outputText>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.email}" />
+				</f:facet>
+				<h:outputText value="#{u.email}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.privilege}" />
+				</f:facet>
+				<h:outputText value="#{u.privilege}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.active}" />
+				</f:facet>
+				<h:outputText value="#{msg.active}" rendered="#{u.active}" />
+				<h:outputText value="#{msg.inactive}" rendered="#{not u.active}" />
+			</h:column>
+			<h:column rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}">
+				<h:commandLink value="#{msg.activate}"
+					action="#{manageUsersBean.activateUser(u)}" rendered="#{not u.active}" />
+				<h:commandLink value="#{msg.deactivate}"
+					action="#{manageUsersBean.deactivateUser(u)}" rendered="#{u.active}" />
+			</h:column>
+			<h:column rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}">
+				<h:commandLink value="#{msg.edit}" action="editUser">
+					<f:param name="userToEdit" value="#{u}" />
+				</h:commandLink>
+			</h:column>
+		</h:dataTable>
+
+		<h:commandButton value="#{msg.add}" action="#{userBean.displayAddUser}" />
+		
+		<br />
+		
+		<h:message for="manageUsersForm" style="color: red" />
+		
+	</h:form>
+</ui:composition>

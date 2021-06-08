@@ -1,0 +1,13 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<p:chart type="line" model="#{reportBean.buyersLine}" style="width:600px;" />
+	<p:chart type="pie" model="#{reportBean.buyersPie}" style="height:300px;width:400px;" />
+	<p:chart type="line" model="#{reportBean.sellersLine}" style="width:600px;" />
+	<p:chart type="pie" model="#{reportBean.sellersPie}" style="height:300px;width:400px;" />
+	
+</ui:composition>

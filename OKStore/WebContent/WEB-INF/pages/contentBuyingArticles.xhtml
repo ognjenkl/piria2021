@@ -1,0 +1,259 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<h2>
+		<h:outputText value="#{msg.pageBuyingArticlesTitle}" />
+	</h2>
+
+	<h:form id="buyingArticlesForm" style="overflow-x: auto;"
+		prependId="true">
+		<h:dataTable id="buyingArticlesDataTable" border="1"
+			value="#{articlesBean.buyingArticleList}" var="a">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleName}" />
+				</f:facet>
+				<h:outputText value="#{a.name}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescriptionShort}" />
+				</f:facet>
+				<h:outputText value="#{a.descriptionShort}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePrice}" />
+				</f:facet>
+				<h:outputText value="#{a.price}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleCategory}" />
+				</f:facet>
+				<ui:repeat var="cat" value="#{a.categoryList}">
+					<h:outputText value="#{cat.name}" />
+					<br />
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePicture}" />
+				</f:facet>
+				<ui:repeat var="p" value="#{a.pictureList}">
+					<h:outputLink value="#{p.locationURL}" target="_blank">
+						<h:graphicImage value="#{p.location}" width="50px" />
+					</h:outputLink>
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleStartSellingDate}" />
+				</f:facet>
+				<h:outputText value="#{a.startSellingDate}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleEndSellingPeriod}" />
+				</f:facet>
+				<h:outputText value="#{a.endSellingPeriod}" />
+			</h:column>
+			<h:column>
+				<h:commandButton value="#{msg.preview}" action="previewArticle">
+					<f:param name="articleToPreview" value="#{a}" />
+					<f:ajax />
+				</h:commandButton>
+			</h:column>
+			<h:column>
+				<h:commandButton value="#{msg.buy}" action="payment">
+					<f:param name="articleIdName" value="#{a.id}" />
+					<f:ajax render="buyingArticlesDataTable boughtArticlesDataTable" />
+				</h:commandButton>
+			</h:column>
+			<h:column>
+				<input type="button" id="msgBtn#{a.id}"
+					value="#{msg.messageToSeller}"
+					onclick="messageField(msgBtn#{a.id})" />
+				<h:panelGroup id="messagePanel" style="display: none">
+					<h:panelGroup id="panelToRender">
+						<h:outputText value="#{msg.message}: " />
+						<h:inputText id="messageId" value="#{articlesBean.messageToSend}"
+							required="true"
+							requiredMessage="#{msg.requiredMessageSendToSeller}">
+							<f:validateLength maximum="1024" />
+							<f:validator validatorId="stringOKValidator" />
+							<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+						</h:inputText>
+						<h:commandButton value="#{msg.send}"
+							action="#{articlesBean.sendMessageToSeller(a.id)}">
+							<f:ajax execute="messageId" render="panelToRender" />
+						</h:commandButton>
+						<h:message for="messageId" style="color: red" />
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:column>
+			<h:column>
+				<input type="button" id="reportMsgBtn#{a.id}"
+					value="#{msg.messageToAdmin}"
+					onclick="messageField(reportMsgBtn#{a.id})"> </input>
+				<h:panelGroup id="messagePanelReport" style="display: none">
+					<h:panelGroup id="panelToRenderReport">
+						<h:outputText value="#{msg.message}: " />
+						<h:inputText id="messageReportId"
+							value="#{articlesBean.messageToSend}" required="true"
+							requiredMessage="#{msg.requiredMessageReport}">
+							<f:validateLength maximum="1024" />
+							<f:validator validatorId="stringOKValidator" />
+							<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+						</h:inputText>
+						<h:commandButton value="#{msg.send}"
+							action="#{articlesBean.sendMessageReport(a.id)}">
+							<f:ajax execute="messageReportId" render="panelToRenderReport" />
+						</h:commandButton>
+						<h:message for="messageReportId" style="color: red" />
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+
+
+	<h2>
+		<br /> <br />
+		<h:outputText value="#{msg.pageBoughtArticlesTitle}" />
+	</h2>
+
+	<h:form id="boughtArticlesForm" style="overflow-x: auto;"
+		prependId="false">
+		<h:dataTable id="boughtArticlesDataTable" border="1"
+			value="#{articlesBean.boughtArticleList}" var="a">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleName}" />
+				</f:facet>
+				<h:outputText value="#{a.name}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescriptionShort}" />
+				</f:facet>
+				<h:outputText value="#{a.descriptionShort}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescription}" />
+				</f:facet>
+				<h:outputText value="#{a.description}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePrice}" />
+				</f:facet>
+				<h:outputText value="#{a.price}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleCategory}" />
+				</f:facet>
+				<ui:repeat var="cat" value="#{a.categoryList}">
+					<h:outputText value="#{cat.name}" />
+					<br />
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePicture}" />
+				</f:facet>
+				<ui:repeat var="p" value="#{a.pictureList}">
+					<h:outputLink value="#{p.locationURL}" target="_blank">
+						<h:graphicImage value="#{p.location}" width="50px" />
+					</h:outputLink>
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleBuyingDate}" />
+				</f:facet>
+				<h:outputText value="#{a.buyDate}" />
+			</h:column>
+			<h:column>
+				<h:panelGroup id="ratePanel">
+					<f:facet name="header">
+						<h:outputText value="#{msg.pageArticleRate}" />
+					</f:facet>
+					<p:rating id="rate#{a.id}"
+						valueChangeListener="#{articleBean.rate(a.id)}" cancel="false"
+						value="#{a.rateSeller}"
+						readonly="#{a.rateSeller > 0 || (articleBean.rateAllowed(a.buyDate))}">
+						<p:ajax event="rate" listener="#{articleBean.onRate}"
+							update="@form" partialSubmit="true" />
+					</p:rating>
+
+				</h:panelGroup>
+				<h:message for="ratePanel" style="color: red" />
+			</h:column>
+			<h:column>
+				<input type="button" id="msgBtn#{a.id}"
+					value="#{msg.messageToSeller}"
+					onclick="messageField(msgBtn#{a.id})"> </input>
+				<h:panelGroup id="boughtMessagePanel" style="display: none">
+					<h:panelGroup id="boughtPanelToRender">
+						<h:outputText value="#{msg.message}: " />
+						<h:inputText id="boughtMessageId"
+							value="#{articlesBean.messageToSend}" required="true"
+							requiredMessage="#{msg.requiredMessageSendToSeller}">
+							<f:validateLength maximum="1024" />
+							<f:validator validatorId="stringOKValidator" />
+							<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+						</h:inputText>
+						<h:commandButton value="#{msg.send}"
+							action="#{articlesBean.sendMessageToSeller(a.id)}">
+							<f:ajax execute="boughtMessageId" render="boughtPanelToRender" />
+						</h:commandButton>
+						<h:message for="boughtMessageId" style="color: red" />
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:column>
+			<h:column>
+				<input type="button" id="reportMsgBtn#{a.id}"
+					value="#{msg.messageToAdmin}"
+					onclick="messageField(reportMsgBtn#{a.id})"> </input>
+				<h:panelGroup id="boughtMessagePanelReport" style="display: none">
+					<h:panelGroup id="boughtPanelToRenderReport">
+						<h:outputText value="#{msg.message}: " />
+						<h:inputText id="boughtMessageReportId"
+							value="#{articlesBean.messageToSend}" required="true"
+							requiredMessage="#{msg.requiredMessageReport}">
+							<f:validateLength maximum="1024" />
+							<f:validator validatorId="stringOKValidator" />
+							<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+						</h:inputText>
+						<h:commandButton value="#{msg.send}"
+							action="#{articlesBean.sendMessageReport(a.id)}">
+							<f:ajax execute="boughtMessageReportId"
+								render="boughtPanelToRenderReport" />
+						</h:commandButton>
+						<h:message for="boughtMessageReportId" style="color: red" />
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+
+	<script type="text/javascript">
+		// show/hide button and field for sending messages
+		function messageField(btnHtml) {
+			var btn = document.getElementById(btnHtml.id);
+			var form = document.getElementById(btn.nextElementSibling.id);
+			if (form.style.display === 'none') {
+				// show form, hide button
+				form.style.display = '';
+				btn.style.display = 'none';
+			}
+		}
+	</script>
+</ui:composition>

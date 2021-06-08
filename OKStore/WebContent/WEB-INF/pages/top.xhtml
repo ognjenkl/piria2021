@@ -1,0 +1,46 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<h:form id="topForm" prependId="true">
+   		<div class="links">
+   			<h:link outcome="#{msg.pageGuest}" value="#{msg.pageGuestLinkName}" />
+   			<h:link outcome="#{msg.pageUser}" value="#{msg.pageUserLinkName}" rendered="#{userBean.user.privilege lt 4}" />
+   			<h:link outcome="#{msg.pageManageUsers}" value="#{msg.pageManageUsersLinkName}" rendered="#{userBean.user.privilege lt 2}" />
+    		<h:link outcome="#{msg.pageSellingArticlesNavigation}" value="#{msg.pageSellingArticlesLinkName}" rendered="#{userBean.user.privilege eq 3}" />
+    		<h:link outcome="#{msg.pageBuyingArticlesNavigation}" value="#{msg.pageBuyingArticlesLinkName}" rendered="#{userBean.user.privilege eq 3}" />
+    		<h:link id="topMessage" outcome="#{msg.pageMessageNavigation}" value="#{msg.pageMessageLinkName}(#{messageBean.unreadMessagesCount})" rendered="#{userBean.user.privilege lt 4}" />
+			<h:link id="topChat" outcome="#{msg.pageChatNavigation}" value="#{msg.pageChatLinkName}(#{chatBean.unreadChatCount})" rendered="#{userBean.user.privilege lt 4}" />
+            <h:link outcome="#{msg.pageStatisticsNavigation}" value="#{msg.pageStatisticsLinkName}" rendered="#{userBean.user.privilege lt 2}" />
+            <h:link outcome="#{msg.pagePurchaseNavigation}" value="#{msg.pagePurchaseLinkName}" rendered="#{userBean.user.privilege lt 2}" />
+                
+    		<h:commandLink action="#{userBean.logout}" rendered="#{userBean.loggedIn and userBean.user.privilege lt 4}">
+				<h:outputText value="#{msg.logout}: #{userBean.user.username}" />
+    		</h:commandLink>
+    		
+    		<h:selectOneMenu id="langMenu" value="#{userBean.language}" onchange="submit()">
+    			<f:selectItems value="#{userBean.availableItems.entrySet()}" var="entry"
+    							itemValue="#{entry.key}" itemLabel="#{entry.value}" >
+    			</f:selectItems>
+    			
+    		</h:selectOneMenu>
+   		</div>
+   		
+	</h:form>
+	
+	<h:form>
+		<f:websocket channel="topMessageChannel">
+			<f:ajax event="ajaxTopMessageEvent" listener="#{messageBean.ajaxTopMessagePushed}" render=":topForm:topMessage" />
+		</f:websocket>
+	</h:form>
+	<h:form>
+		<f:websocket channel="topChatChannel">
+			<f:ajax event="ajaxTopChatEvent" listener="#{chatBean.ajaxTopChatPushed}" render=":topForm:topChat" />
+		</f:websocket>
+	</h:form>
+	
+</ui:composition>
+

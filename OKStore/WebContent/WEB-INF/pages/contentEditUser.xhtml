@@ -1,0 +1,72 @@
+<ui:composition sxmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<h:outputText value="#{userEditBean.user.username}" />
+	<br />
+
+	<h:form id="formEditUser" enctype="multipart/form-data">
+		<h:panelGrid columns="3">
+			<h:outputLabel for="firstName" value="#{msg.firstName}:" />
+			<h:inputText id="firstName" value="#{userEditBean.user.firstName}">
+				<f:validateLength maximum="100" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="firstName" style="color: red" />
+
+			<h:outputLabel for="lastName" value="#{msg.lastName}:" />
+			<h:inputText id="lastName" value="#{userEditBean.user.lastName}">
+				<f:validateLength maximum="100" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="lastName" style="color: red" />
+
+			<h:outputLabel for="socialNo" value="#{msg.socialNo}:" />
+			<h:inputText id="socialNo" value="#{userEditBean.user.socialNo}">
+				<f:validateLength maximum="45" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="socialNo" style="color: red" />
+
+			<h:outputLabel for="birthDate" value="#{msg.birthDate}:" />
+			<p:calendar id="birthDate" value="#{userEditBean.user.birthDate}"
+				pattern="dd.MM.yyyy." showOn="button" navigator="true"
+				converter="dateToDateConverter" />
+			<h:message for="birthDate" />
+
+			<h:outputLabel for="email" value="#{msg.email}:" />
+			<h:inputText id="email" value="#{userEditBean.user.email}">
+				<f:validateLength minimum="5" maximum="254" />
+				<f:validator validatorId="stringOKValidator" />
+				<f:attribute name="errorMessage" value="#{msg.validationFail}" />
+			</h:inputText>
+			<h:message for="email" style="color: red" />
+
+			<h:outputLabel for="privilege" value="#{msg.privilege}:"
+				rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}" />
+			<h:selectOneMenu id="privilege"
+				value="#{userEditBean.user.privilege}"
+				rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}">
+				<f:selectItem itemValue="#{msg.userNum}" itemLabel="#{msg.user}" />
+				<f:selectItem itemValue="#{msg.adminNum}" itemLabel="#{msg.admin}" />
+				<f:validateLongRange minimum="1" maximum="100" />
+			</h:selectOneMenu>
+			<h:message for="privilege" style="color: red"
+				rendered="#{userBean.loggedIn and userBean.user.privilege eq 1}" />
+
+			<h:panelGroup>
+				<h:commandButton id="editUserBtn" value="#{msg.edit}"
+					action="#{userEditBean.editUser}" />
+				<h:commandButton id="cancelUserBtn" value="#{msg.cancel}"
+					immediate="true" action="manageUsers?faces-redirect=true" />
+			</h:panelGroup>
+			<h:message for="formEditUser" />
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

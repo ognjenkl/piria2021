@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<h2>
+		<h:outputText value="#{msg.welcome} #{userBean.user.firstName}" />
+	</h2>
+
+
+	<h:form id="loginForm">
+		<h:panelGrid columns="3" rendered="#{!userBean.loggedIn}">
+
+			<h:outputLabel for="username" value="#{msg.username}:" />
+			<h:inputText id="username" value="#{userBean.username}"
+				required="true" requiredMessage="#{msg.usernameRequiredMessage}">
+				<f:validateLength maximum="45" />
+			</h:inputText>
+			<h:message for="username" style="color: red" />
+
+			<h:outputLabel for="password" value="#{msg.password}:" />
+			<h:inputSecret id="password" value="#{userBean.password}"
+				required="true" requiredMessage="#{msg.passwordRequiredMessage}" />
+			<h:message for="password" style="color: red" />
+
+		</h:panelGrid>
+		<h:commandButton id="loginButton" value="#{msg.login}"
+			action="#{userBean.login}" rendered="#{!userBean.loggedIn}" />
+		<div />
+		<h:message for="loginForm" style="color: red" />
+	</h:form>
+
+	<h:panelGroup id="registerForm">
+		<h:panelGroup id="forRenderOnly" rendered="#{!userBean.loggedIn}">
+			<ui:include src="/WEB-INF/pages/formAddUser.xhtml" />
+			<h:message for="registerForm" />
+		</h:panelGroup>
+	</h:panelGroup>
+
+
+	<h:form id="searchForm">
+		<h:outputLabel for="searchArticle" value="#{msg.search}:" />
+		<h:selectManyCheckbox value="#{articleBean.searchCriteriaCheckBoxes}">
+			<f:selectItems value="#{articleBean.searchCriteriaPredefinedValues}" />
+		</h:selectManyCheckbox>
+		<h:inputText id="searchArticle" value="#{articleBean.keyWord}" />
+		<h:commandButton value="#{msg.search}" action="#{articleBean.search}" />
+
+		<h:dataTable id="searchArticlesDataTable" border="1"
+			value="#{articleBean.foundArticlesList}" var="a"
+			rendered="#{articleBean.foundArticlesList.size() gt 0}">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleName}" />
+				</f:facet>
+				<h:outputText value="#{a.name}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescriptionShort}" />
+				</f:facet>
+				<h:outputText value="#{a.descriptionShort}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescription}" />
+				</f:facet>
+				<h:outputText value="#{a.description}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePrice}" />
+				</f:facet>
+				<h:outputText value="#{a.price}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleCategory}" />
+				</f:facet>
+				<ui:repeat var="cat" value="#{a.categoryList}">
+					<h:outputText value="#{cat.name}" />
+					<br />
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePicture}" />
+				</f:facet>
+				<ui:repeat var="p" value="#{a.pictureList}">
+					<h:outputLink value="#{p.locationURL}" target="_blank">
+						<h:graphicImage value="#{p.location}" width="50px" />
+					</h:outputLink>
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleStartSellingDate}" />
+				</f:facet>
+				<h:outputText value="#{a.startSellingDate}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleEndSellingPeriod}" />
+				</f:facet>
+				<h:outputText value="#{a.endSellingPeriod}" />
+			</h:column>
+			<h:column>
+				<h:commandButton value="#{msg.buy}"
+					action="#{articlesBean.buyArticle(a.id)}">
+					<f:ajax render="searchArticlesDataTable" />
+				</h:commandButton>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+
+	<h2>
+		<br />
+		<h:outputText value="#{msg.suggestion}"
+			rendered="#{userBean.loggedIn 
+						and articlesBean.suggestionArticleList != null 
+						and fn:length(articlesBean.suggestionArticleList) gt 0}" />
+	</h2>
+
+	<h:form id="suggestionArticlesForm" style="overflow-x: auto;"
+		prependId="true"
+		rendered="#{userBean.loggedIn 
+						and articlesBean.suggestionArticleList != null 
+						and fn:length(articlesBean.suggestionArticleList) gt 0}">
+		<h:dataTable id="suggestionArticlesDataTable" border="1"
+			value="#{articlesBean.suggestionArticleList}" var="a">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleName}" />
+				</f:facet>
+				<h:outputText value="#{a.name}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleDescriptionShort}" />
+				</f:facet>
+				<h:outputText value="#{a.descriptionShort}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePrice}" />
+				</f:facet>
+				<h:outputText value="#{a.price}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticleCategory}" />
+				</f:facet>
+				<ui:repeat var="cat" value="#{a.categoryList}">
+					<h:outputText value="#{cat.name}" />
+					<br />
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="#{msg.pageArticlePicture}" />
+				</f:facet>
+				<ui:repeat var="p" value="#{a.pictureList}">
+					<h:outputLink value="#{p.locationURL}" target="_blank">
+						<h:graphicImage value="#{p.location}" width="50px" />
+					</h:outputLink>
+				</ui:repeat>
+			</h:column>
+			<h:column>
+				<h:commandButton value="#{msg.preview}" action="previewArticle">
+					<f:param name="articleToPreview" value="#{a}" />
+					<f:ajax />
+				</h:commandButton>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+
+
+
+	<h:panelGrid
+		rendered="#{not empty articleAdvertisementBean.articleToAdvertiseList}">
+		<h:outputText value="#{msg.advertisement}" />
+		<ui:repeat var="a"
+			value="#{articleAdvertisementBean.articleToAdvertiseList}">
+			<h:outputLink value="previewArticle.xhtml">
+				<h:graphicImage value="#{a.pictureList[0].location}" width="50px" />
+				<f:param name="articleToPreviewId" value="#{a.id}" />
+			</h:outputLink>
+		</ui:repeat>
+	</h:panelGrid>
+</ui:composition>
