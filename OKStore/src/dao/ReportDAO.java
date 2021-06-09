@@ -9,8 +9,20 @@ import java.util.Map;
 
 public class ReportDAO {
 
-	private static final String SQL_GET_SUM_FOR_BUYERS = "select if(isnull(u.username), '???' , u.username) as 'username', sum(a.price) as 'sum' from user_has_article u_has_a join article a on u_has_a.article_id = a.id left join user u on u_has_a.buyer_id = u.id where u_has_a.buyer_id is not null group by u_has_a.buyer_id;";
-	private static final String SQL_GET_SUM_FOR_SELLERS = "select if(isnull(u.username), '???' , u.username) as 'username', sum(a.price) as 'sum' from user_has_article u_has_a join article a on u_has_a.article_id = a.id left join user u on u_has_a.buyer_id = u.id where u_has_a.buyer_id is not null group by u_has_a.seller_id;";
+	private static final String SQL_GET_SUM_FOR_BUYERS = 
+			"select if(isnull(u.username), '???' , u.username) as 'username', sum(a.price) as 'sum' "
+			+ "from user_has_article u_has_a "
+			+ "join article a on u_has_a.article_id = a.id "
+			+ "left join user u on u_has_a.buyer_id = u.id "
+			+ "where u_has_a.buyer_id is not null "
+			+ "group by u_has_a.buyer_id;";
+	private static final String SQL_GET_SUM_FOR_SELLERS = 
+			"select if(isnull(u.username), '???' , u.username) as 'username', sum(a.price) as 'sum' "
+			+ "from user_has_article u_has_a "
+			+ "join article a on u_has_a.article_id = a.id "
+			+ "left join user u on u_has_a.seller_id = u.id "
+			+ "where u_has_a.seller_id is not null "
+			+ "group by u_has_a.seller_id;";
 
 	
 	public static Map<String, Double> getSumForBuyers() {
@@ -43,9 +55,7 @@ public class ReportDAO {
 				}
 			ConnectionPool.getConnectionPool().checkIn(conn);
 		}
-
 	}
-
 	
 	public static Map<String, Double> getSumForSellers() {
 		Map<String, Double> map = new HashMap<>();
@@ -77,7 +87,5 @@ public class ReportDAO {
 				}
 			ConnectionPool.getConnectionPool().checkIn(conn);
 		}
-
 	}
-	
 }
